@@ -1,13 +1,8 @@
 import pytest
 
 from algorithms.minimum_spanning_tree import MinimumSpanningTree
-from graph.graph import Edge, Vertex
-
-
-def make_edges(verticies, edge_indicies):
-    return [
-        Edge(verticies[i], verticies[j]) for i, j in edge_indicies
-    ]
+from graph.graph import Vertex
+from tests.utils import make_edges
 
 
 @pytest.mark.parametrize(
