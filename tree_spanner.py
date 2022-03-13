@@ -189,6 +189,17 @@ if __name__ == '__main__':
         print(f'Total edge length: {total_cost:.2f}')
 
     if arguments.plottable:
+        print(arguments.algorithm.__name__)
+        print(total_cost)
+
+        for terminal in arguments.terminals:
+            print(f'{terminal.x},{terminal.y}')
+        print()  # line feed
+
+        for vertices in arguments.vertices:
+            print(f'{vertices.x},{vertices.y}')
+        print()  # line feed
+
         for e in edges:
-            print(f'{e.v1.x},{e.v1.y}')
-            print(f'{e.v2.x},{e.v2.y}')
+            print(f'{e.v1.x},{e.v1.y};{e.v2.x},{e.v2.y}')
+        print()  # line feed
