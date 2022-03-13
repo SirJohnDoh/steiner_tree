@@ -40,10 +40,10 @@ class MinimumSpanningTree:
         return self.edges, self.total_cost()
 
     def total_cost(self):
-        return sum(e.distance for e in self.edges)
+        return sum(e.distance() for e in self.edges)
 
     def _add_every_edge(self, from_vertex):
         for vertex in self.vertices:
             if (vertex != from_vertex):
-                e = Edge(from_vertex, vertex, from_vertex.distance_to(vertex))
+                e = Edge(from_vertex, vertex)
                 heapq.heappush(self.heap_priorty_q, e)
