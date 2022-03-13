@@ -3,6 +3,8 @@
 import argparse
 import random
 
+from datetime import datetime
+
 from algorithms.dreyfus_wagner import DreyfusWagnerAlgorithm
 from algorithms.minimum_spanning_tree import MinimumSpanningTree
 from graph.graph import Vertex, eculidean_distance
@@ -37,7 +39,7 @@ def randomize_terms_and_vertices(
         rand_vert() for i in range(terminal_count)
     ]
     vertices = [
-        rand_vert() for i in range(terminal_count)
+        rand_vert() for i in range(verticies_count)
     ]
     return terminals, vertices
 
@@ -116,6 +118,18 @@ def parse_arguments():
         type=int,
         required=False,
     )
+    parser.add_argument(
+        '--time',
+        help='Measure the time of the solution',
+        action='store_true',
+        default=False,
+    )
+    parser.add_argument(
+        '-q', '--quiet',
+        help='Supress output',
+        action='store_true',
+        default=False,
+    )
     arguments = parser.parse_args()
     arguments.algorithm = pick_algorithm(arguments.algorithm)
     arguments.distance_function = pick_distance_function(arguments.distance_function)
@@ -143,13 +157,24 @@ def parse_arguments():
 if __name__ == '__main__':
     arguments = parse_arguments()
 
-    print(f'Tree to span has {len(arguments.terminals)} terminal(s) and {len(arguments.vertices)} optional node(s).')
-    print(f'Solution is searched with: {arguments.algorithm.__name__}')
+    if not arguments.quiet:
+        print(f'Tree to span has {len(arguments.terminals)} terminal(s) and {len(arguments.vertices)} optional node(s).')
+        print(f'Solution is searched with: {arguments.algorithm.__name__}')
+
+    mark = None
+    if arguments.time:
+        mark = datetime.now()
 
     edges, total_cost = arguments.algorithm(arguments.terminals, arguments.vertices).solve()
 
-    print('Edges:')
-    for e in edges:
-        print(f'\t{e}')
+    if mark:
+        time = datetime.now() - mark
+        if not arguments.quiet:
+            print(f'Solution took {time.total_seconds()} s')
 
-    print(f'Total edge length: {total_cost:.2f}')
+    if not arguments.quiet:
+        print('Edges:')
+        for e in edges:
+            print(f'\t{e}')
+
+        print(f'Total edge length: {total_cost:.2f}')
