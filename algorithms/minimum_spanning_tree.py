@@ -7,7 +7,7 @@ from graph.graph import Edge, Vertex
 
 class MinimumSpanningTree(TreeSpanningAlgorithm):
 
-    # Optional verticies are not used by the minimum spanning tree algorithm
+    # Optional vertices are not used by the minimum spanning tree algorithm
     def __init__(self, terminal_vertices: List[Vertex], _: List[Vertex] = []):
         super().__init__(terminal_vertices, [])
         self.edges = []
@@ -15,7 +15,7 @@ class MinimumSpanningTree(TreeSpanningAlgorithm):
         self.start_vertex = self.terminal_vertices[0] if terminal_vertices else None
 
     def solve(self) -> Tuple[List[Edge], float]:
-        # No verticies
+        # No vertices
         if not self.start_vertex:
             return self.edges, self.total_cost()
 

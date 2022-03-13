@@ -35,7 +35,7 @@ class DreyfusWagnerAlgorithm(TreeSpanningAlgorithm):
 
     def solve(self) -> Tuple[List[Edge], float]:
 
-        # No verticies
+        # No vertices
         if not self.terminal_vertices:
             return [], 0.0
 
@@ -65,7 +65,7 @@ class DreyfusWagnerAlgorithm(TreeSpanningAlgorithm):
         remaining_count = remaining.count()  # Count number of 1's in the array
 
         if (remaining_count == 0):  # Every terminal is accounted for, terminate recursion
-            return 0
+            return 0.0
 
         if (remaining_count == 1):  # Only one terminal left
             # Find the index of that terminal
@@ -129,7 +129,7 @@ class DreyfusWagnerAlgorithm(TreeSpanningAlgorithm):
         remaining = bitarray(remaining_terminals)
 
         if (remaining.count() < 2):  # No steiner vertex exists for less than 2 terminals
-            return 0
+            return 0.0
 
         existing_split = self.split_map.get(SearchState(vertex, remaining), None)
         if (existing_split is not None):

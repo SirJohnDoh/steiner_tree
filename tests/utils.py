@@ -1,7 +1,7 @@
 from graph.graph import Edge
 
 
-def make_edges(verticies, edge_indicies):
+def make_edges(vertices, edge_indices):
     return [
-        Edge(verticies[i], verticies[j]) for i, j in edge_indicies
+        Edge(vertices[i], vertices[j]) for i, j in edge_indices
     ]
