@@ -17,7 +17,7 @@ def make_edges(verticies, edge_indicies):
         ([], 0, []),
         ([Vertex(1, 1)], 0, []),
         # Two verticies should be conntected
-        ([Vertex(0, 0), Vertex(0, 1), ], 1, [(0, 1)]),
+        ([Vertex(0, 0), Vertex(0, 1)], 1, [(0, 1)]),
         # Three verticies, connect both with the first node
         ([Vertex(0, 0), Vertex(0, 1), Vertex(1, 0)], 2, [(0, 1), (0, 2)]),
     ]
