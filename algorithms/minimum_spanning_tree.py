@@ -1,6 +1,6 @@
 import heapq
 from graph.graph import Edge, Vertex
-from typing import List
+from typing import List, Tuple
 
 
 class MinimumSpanningTree:
@@ -11,7 +11,7 @@ class MinimumSpanningTree:
         self.heap_priorty_q = []
         self.start_vertex = self.vertices[0] if vertices else None
 
-    def solve(self):
+    def solve(self) -> Tuple[List[Edge], float]:
         # No verticies
         if not self.start_vertex:
             return self.edges, self.total_cost()
