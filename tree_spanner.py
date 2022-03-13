@@ -158,7 +158,10 @@ if __name__ == '__main__':
     arguments = parse_arguments()
 
     if not arguments.quiet:
-        print(f'Tree to span has {len(arguments.terminals)} terminal(s) and {len(arguments.vertices)} optional node(s).')
+        print(
+            f'Tree to span has {len(arguments.terminals)} terminal(s) and '
+            f'{len(arguments.vertices)} optional node(s).'
+        )
         print(f'Solution is searched with: {arguments.algorithm.__name__}')
 
     mark = None
