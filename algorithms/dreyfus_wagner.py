@@ -2,6 +2,7 @@ from bitarray import bitarray
 from typing import List, Tuple
 
 from algorithms.base_algorithm import TreeSpanningAlgorithm
+from algorithms.minimum_spanning_tree import MinimumSpanningTree
 from graph.graph import Edge, Vertex
 
 
@@ -38,6 +39,10 @@ class DreyfusWagnerAlgorithm(TreeSpanningAlgorithm):
         # No vertices
         if not self.terminal_vertices:
             return [], 0.0
+
+        # No optional vertices, solve as a minimum spanning tree
+        if not self.optional_vertices:
+            return MinimumSpanningTree(self.terminal_vertices).solve()
 
         remaining = bitarray(len(self.terminal_vertices))
         remaining.setall(True)
@@ -76,15 +81,15 @@ class DreyfusWagnerAlgorithm(TreeSpanningAlgorithm):
 
             # Add tuple of distance and the remaining vertex to the candidate map
             self.candidate_map[SearchState(vertex, remaining)] = (
-                            distance, self.terminal_vertices[index]
-                        )
+                distance, self.terminal_vertices[index]
+            )
             return distance
 
         # Try to get it or None
         existing_candidate = self.candidate_map.get(
-                    SearchState(vertex, remaining),
-                    None
-                )
+            SearchState(vertex, remaining),
+            None
+        )
         if (existing_candidate is not None):
             return existing_candidate[0]  # Return the distance part of the tuple
 
