@@ -130,6 +130,12 @@ def parse_arguments():
         action='store_true',
         default=False,
     )
+    parser.add_argument(
+        '-p', '--plottable',
+        help='Outputs only x and y coordinates of the edges',
+        action='store_true',
+        default=False,
+    )
     arguments = parser.parse_args()
     arguments.algorithm = pick_algorithm(arguments.algorithm)
     arguments.distance_function = pick_distance_function(arguments.distance_function)
@@ -157,7 +163,7 @@ def parse_arguments():
 if __name__ == '__main__':
     arguments = parse_arguments()
 
-    if not arguments.quiet:
+    if not (arguments.quiet or arguments.plottable):
         print(
             f'Tree to span has {len(arguments.terminals)} terminal(s) and '
             f'{len(arguments.vertices)} optional node(s).'
@@ -172,12 +178,17 @@ if __name__ == '__main__':
 
     if mark:
         time = datetime.now() - mark
-        if not arguments.quiet:
+        if not (arguments.quiet or arguments.plottable):
             print(f'Solution took {time.total_seconds()} s')
 
-    if not arguments.quiet:
+    if not (arguments.quiet or arguments.plottable):
         print('Edges:')
         for e in edges:
             print(f'\t{e}')
 
         print(f'Total edge length: {total_cost:.2f}')
+
+    if arguments.plottable:
+        for e in edges:
+            print(f'{e.v1.x},{e.v1.y}')
+            print(f'{e.v2.x},{e.v2.y}')
