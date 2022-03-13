@@ -2,3 +2,4 @@
 env
 .tox
 .pytest_cache
+__pycache__
