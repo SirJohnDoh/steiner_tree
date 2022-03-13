@@ -3,4 +3,7 @@ exclude =
     .git,
     __pycache__,
     env
+    .tox
+    .pytest_cache
+    .vscode
 max-line-length = 120
