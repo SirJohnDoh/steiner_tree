@@ -51,3 +51,13 @@ def test_edge_distance(edge, expected_distance):
 )
 def test_order_edges(edges, expected_order):
     assert sorted(edges) == expected_order
+
+@pytest.mark.parametrize(
+    'e1,e2',
+    [
+        # Order of verticies should not matter
+        (Edge(Vertex(0, 0), Vertex(1, 0)), Edge(Vertex(1, 0), Vertex(0, 0))),
+    ]
+)
+def test_edge_equals(e1, e2):
+    assert e1 == e2

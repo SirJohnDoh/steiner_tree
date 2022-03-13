@@ -12,6 +12,14 @@ def eculidean_distance(v1, v2):
 
 
 class Vertex:
+
+    @classmethod
+    def from_str(cls, vertex_str: str, distance_function: Callable[[Vertex, Vertex], float] = eculidean_distance):
+        x, y = vertex_str.split(',')
+        x = float(x)
+        y = float(y)
+        return cls(x, y, distance_function)
+
     def __init__(self, x, y, distance_function: Callable[[Vertex, Vertex], float] = eculidean_distance):
         self.x = x
         self.y = y
@@ -53,6 +61,16 @@ class Edge:
     def __eq__(self, other: Edge):
         return (
             self.distance() == other.distance() and
-            self.v1 == other.v1 and
-            self.v2 == other.v2
+            # Edges are omnidirectional
+            (
+                self.v1 == other.v1 and
+                self.v2 == other.v2
+            ) or
+            (
+                self.v1 == other.v2 and
+                self.v2 == other.v1
+            )
         )
+
+    def __str__(self):
+        return f'{self.v1} <-> {self.v2}'

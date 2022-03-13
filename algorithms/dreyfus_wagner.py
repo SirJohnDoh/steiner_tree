@@ -1,7 +1,7 @@
+from bitarray import bitarray
 from typing import List, Tuple
 
-from bitarray import bitarray
-
+from algorithms.base_algorithm import TreeSpanningAlgorithm
 from graph.graph import Edge, Vertex
 
 
@@ -19,14 +19,13 @@ class SearchState:
         return hash(self.vertex) + 37 * hash(self.remaining.to01())
 
     def __repr__(self):
-        return "V: " + self.vertex.__repr__() + " remaining: " + self.remaining.__repr__()
+        return 'V: ' + self.vertex.__repr__() + ' remaining: ' + self.remaining.__repr__()
 
 
-class DreyfusWagnerAlgorithm:
+class DreyfusWagnerAlgorithm(TreeSpanningAlgorithm):
 
     def __init__(self, terminal_vertices: List[Vertex], optional_vertices: List[Vertex]):
-        self.terminal_vertices = terminal_vertices
-        self.optional_vertices = optional_vertices
+        super().__init__(terminal_vertices, optional_vertices)
         self.split_map = dict()
         self.candidate_map = dict()
         self._total_cost = 0.0
