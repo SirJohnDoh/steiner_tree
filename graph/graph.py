@@ -72,5 +72,11 @@ class Edge:
             )
         )
 
+    def __hash__(self):
+        return hash(self.v1) + hash(self.v2)
+
+    def __repr__(self):
+        return str(self)
+
     def __str__(self):
         return f'{self.v1} <-> {self.v2}'
