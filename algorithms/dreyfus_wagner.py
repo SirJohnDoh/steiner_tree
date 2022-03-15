@@ -54,8 +54,7 @@ class DreyfusWagnerAlgorithm(TreeSpanningAlgorithm):
         # Start at the first terminal
         remaining[0] = False
 
-        self._connect_vertex_non_recursive(self.terminal_vertices[0], remaining)
-        # self._connect_vertex(self.terminal_vertices[0], remaining)
+        self._connect_vertex(self.terminal_vertices[0], remaining)
 
         self._build_solution_connect(self.terminal_vertices[0], remaining)
 
@@ -64,7 +63,7 @@ class DreyfusWagnerAlgorithm(TreeSpanningAlgorithm):
     def total_cost(self) -> float:
         return sum([e.distance() for e in self.steiner_edges])
 
-    def _connect_vertex_non_recursive(self, start_vertex: Vertex, remaining_terminals: bitarray) -> float:
+    def _connect_vertex(self, start_vertex: Vertex, remaining_terminals: bitarray) -> float:
 
         # Initilze the stack with the parameters, copy the bitarray
         parameter_stack = [(start_vertex, bitarray(remaining_terminals), 0.0, None, False)]
@@ -159,72 +158,6 @@ class DreyfusWagnerAlgorithm(TreeSpanningAlgorithm):
             parameter_stack.append(
                 (vertex, remaining, 0.0, inner_stack, True)
             )
-
-    def _connect_vertex(self, vertex: Vertex, remaining_terminals: bitarray) -> float:
-
-        # Copy the remaining terminals
-        remaining = bitarray(remaining_terminals)
-
-        remaining_count = remaining.count()  # Count number of 1's in the array
-
-        if (remaining_count == 0):  # Every terminal is accounted for, terminate recursion
-            return 0.0
-
-        if (remaining_count == 1):  # Only one terminal left
-            # Find the index of that terminal
-            index = remaining.index(True)
-
-            # Look up distance between the remaining terminal and the current vertex
-            distance = vertex.distance_to(self.terminal_vertices[index])
-
-            # Add tuple of distance and the remaining vertex to the candidate map
-            self.candidate_map[SearchState(vertex, remaining)] = (
-                distance, self.terminal_vertices[index]
-            )
-            return distance
-
-        # Try to get it or None
-        existing_candidate = self.candidate_map.get(
-            SearchState(vertex, remaining),
-            None
-        )
-        if (existing_candidate is not None):
-            return existing_candidate[0]  # Return the distance part of the tuple
-
-        best_split_distance = self._split_vertex(vertex, remaining)
-        candidate = vertex
-
-        # Check every grid vertex if they can offer a better split
-        for optional_vertex in self.optional_vertices:
-            distance = self._split_vertex(optional_vertex, remaining)
-            distance += vertex.distance_to(optional_vertex)
-            if (best_split_distance < 0 or distance < best_split_distance):
-                # Found a better split
-                best_split_distance = distance
-                candidate = optional_vertex
-
-        for vert, index in self.terminal_to_index.items():
-            if (not remaining[index]):  # Ignore any used terminal
-                continue
-
-            remaining[index] = False  # Set the terminal bit to false temporarily
-            # Recursive call
-            distance = self._connect_vertex(vert, remaining)
-
-            distance += vertex.distance_to(vert)
-            remaining[index] = True  # Set  it back
-
-            if (best_split_distance < 0 or distance < best_split_distance):
-                # Found a better split
-                best_split_distance = distance
-                candidate = vert
-
-        # Add the new found best distance and the candidate vertex to the map
-        self.candidate_map[SearchState(vertex, remaining)] = (
-            best_split_distance,
-            candidate
-        )
-        return best_split_distance
 
     def _split_vertex(self, vertex: Vertex, remaining_terminals: bitarray) -> float:
 
