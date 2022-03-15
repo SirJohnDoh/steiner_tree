@@ -4,6 +4,7 @@ import argparse
 import random
 
 from datetime import datetime
+from algorithms.brute_force_mst import BruteForceMST
 
 from algorithms.dreyfus_wagner import DreyfusWagnerAlgorithm
 from algorithms.minimum_spanning_tree import MinimumSpanningTree
@@ -15,6 +16,8 @@ def pick_algorithm(algorithm):
         return DreyfusWagnerAlgorithm
     if algorithm == 'mst':
         return MinimumSpanningTree
+    if algorithm == 'bfmst':
+        return BruteForceMST
     raise Exception(f'Unknown algorithm {algorithm}')
 
 
@@ -50,7 +53,7 @@ def parse_arguments():
         '-a', '---algorithm',
         default='mst',
         help='The algorithm to run Dreyfus Wagner (dwf), Minimum Spanning tree (mst). Default mst',
-        choices=['dfw', 'mst'],
+        choices=['dfw', 'mst', 'bfmst'],
         type=str
     )
     parser.add_argument(
