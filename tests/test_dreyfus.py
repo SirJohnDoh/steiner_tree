@@ -1,6 +1,5 @@
 import pytest
 from math import sqrt
-from algorithms.brute_force_mst import BruteForceMST
 
 from graph.graph import Vertex
 from algorithms.dreyfus_wagner import DreyfusWagnerAlgorithm
@@ -59,7 +58,7 @@ def test_with_optional_vertices(vertices, optional_vertices, expected_total_cost
 
     expected_edges = make_edges(vertices + optional_vertices, expected_edge_indices)
 
-    edges, total_cost = BruteForceMST(vertices, optional_vertices).solve()
+    edges, total_cost = DreyfusWagnerAlgorithm(vertices, optional_vertices).solve()
 
     assert expected_total_cost == total_cost
     # Order should not matter
