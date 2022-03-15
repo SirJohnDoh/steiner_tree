@@ -1,5 +1,6 @@
-from bitarray import bitarray
 from typing import List, Tuple
+
+from bitarray import bitarray
 
 from algorithms.base_algorithm import TreeSpanningAlgorithm
 from algorithms.minimum_spanning_tree import MinimumSpanningTree
@@ -29,7 +30,6 @@ class DreyfusWagnerAlgorithm(TreeSpanningAlgorithm):
         super().__init__(terminal_vertices, optional_vertices)
         self.split_map = dict()
         self.candidate_map = dict()
-        self._total_cost = 0.0
         self.steiner_edges = []
         self.steiner_vertices = []
         self.terminal_to_index = dict()
@@ -54,13 +54,111 @@ class DreyfusWagnerAlgorithm(TreeSpanningAlgorithm):
         # Start at the first terminal
         remaining[0] = False
 
-        self._total_cost = self._connect_vertex(self.terminal_vertices[0], remaining)
+        self._connect_vertex_non_recursive(self.terminal_vertices[0], remaining)
+        # self._connect_vertex(self.terminal_vertices[0], remaining)
+
         self._build_solution_connect(self.terminal_vertices[0], remaining)
 
         return self.steiner_edges, self.total_cost()
 
     def total_cost(self) -> float:
         return sum([e.distance() for e in self.steiner_edges])
+
+    def _connect_vertex_non_recursive(self, start_vertex: Vertex, remaining_terminals: bitarray) -> float:
+
+        # Initilze the stack with the parameters, copy the bitarray
+        parameter_stack = [(start_vertex, bitarray(remaining_terminals), 0.0, None, False)]
+
+        while parameter_stack:
+            vertex, remaining, acc_distance, inner_stack, evaulate_inner_stack = parameter_stack.pop()
+
+            # The inner stack is to get the best candiate of the next vectors if not an optional vector
+            if evaulate_inner_stack:
+                current_distance, _ = self.candidate_map.get(SearchState(vertex, remaining), (None, None))
+                best_tuple = min(inner_stack, key=lambda t: t[1])
+                if current_distance is None or current_distance < 0 or best_tuple[0] < current_distance:
+                    self.candidate_map[SearchState(vertex, remaining)] = (
+                        best_tuple[0], best_tuple[1]
+                    )
+                continue
+
+            remaining_count = remaining.count()  # Count number of 1's in the array
+
+            if (remaining_count == 0):  # Every terminal is accounted for
+                if inner_stack is not None:
+                    inner_stack.append((acc_distance, vertex))
+                continue
+
+            if (remaining_count == 1):  # Only one terminal left
+                # Find the index of that terminal
+                index = remaining.index(True)
+
+                # Look up distance between the remaining terminal and the current vertex
+                distance = vertex.distance_to(self.terminal_vertices[index])
+
+                # Add tuple of distance and the remaining vertex to the candidate map
+                self.candidate_map[SearchState(vertex, remaining)] = (
+                    distance, self.terminal_vertices[index]
+                )
+                if inner_stack is not None:
+                    inner_stack.append((acc_distance, vertex))
+                continue
+
+            # See if we have a previous candidate. No need to do anything else
+            candidate_distance, _ = self.candidate_map.get(
+                SearchState(vertex, remaining),
+                (None, None)
+            )
+            if (candidate_distance is not None):
+                # Append the distance part of the tuple to the result stack
+                continue
+
+            best_split_distance = self._split_vertex(vertex, remaining)
+            candidate = vertex
+
+            # Check every grid vertex if they can offer a better split
+            for optional_vertex in self.optional_vertices:
+                distance = self._split_vertex(optional_vertex, remaining)
+                distance += vertex.distance_to(optional_vertex)
+
+                if (best_split_distance < 0 or distance < best_split_distance):
+                    # Found a better split
+                    best_split_distance = distance
+                    candidate = optional_vertex
+
+            # Add the new found best distance and the candidate vertex to the map
+            self.candidate_map[SearchState(vertex, remaining)] = (
+                best_split_distance,
+                candidate
+            )
+            if inner_stack is not None:
+                inner_stack.append((acc_distance, vertex))
+
+            inner_stack = [(best_split_distance, candidate)]
+
+            # Add all remaining vertices to the stack to be expanded
+            for next_vertex, index in self.terminal_to_index.items():
+                if (not remaining[index]):  # Ignore any used terminal
+                    continue
+
+                remaining[index] = False  # Set the terminal bit to false temporarily
+                # Append to parameter stack
+                parameter_stack.append(
+                    (
+                        next_vertex,
+                        bitarray(remaining),
+                        acc_distance + vertex.distance_to(next_vertex),
+                        inner_stack,
+                        False,
+                    )
+                )
+
+                remaining[index] = True  # Set it back
+
+            # Add the current vertex back to the stack to terminate the best search, ignore accumulated distance
+            parameter_stack.append(
+                (vertex, remaining, 0.0, inner_stack, True)
+            )
 
     def _connect_vertex(self, vertex: Vertex, remaining_terminals: bitarray) -> float:
 

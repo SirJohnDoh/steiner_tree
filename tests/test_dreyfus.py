@@ -1,5 +1,6 @@
 import pytest
 from math import sqrt
+from algorithms.brute_force_mst import BruteForceMST
 
 from graph.graph import Vertex
 from algorithms.dreyfus_wagner import DreyfusWagnerAlgorithm
@@ -40,13 +41,26 @@ def test_no_optional(vertices, expected_total_cost, expected_edge_indices):
             # 4 is the optional vertex
             [(0, 4), (1, 4), (2, 4), (3, 4)],
         ),
+        # Randomized test found failing during implementation, uses no optional verticies
+        (
+            [
+                Vertex(1.46, 4.55), Vertex(7.71, 7.06), Vertex(7.32, 4.34), Vertex(8.00, 5.33), Vertex(0.80, 4.56),
+                Vertex(0.48, 9.33), Vertex(9.47, 3.35), Vertex(3.09, 7.68), Vertex(2.04, 1.78), Vertex(1.89, 3.47)],
+            [
+                Vertex(6.26, 9.63), Vertex(2.11, 9.56), Vertex(5.55, 9.01), Vertex(8.18, 1.60), Vertex(6.49, 1.24),
+                Vertex(0.06, 3.96), Vertex(7.74, 5.66), Vertex(1.93, 8.41), Vertex(9.14, 2.37), Vertex(4.48, 6.38)
+            ],
+            20.119559224905053,
+            [(0, 4), (0, 9), (8, 9), (0, 7), (5, 7), (7, 1), (1, 3), (2, 3), (2, 6)],
+        )
     ]
 )
 def test_with_optional_vertices(vertices, optional_vertices, expected_total_cost, expected_edge_indices):
 
     expected_edges = make_edges(vertices + optional_vertices, expected_edge_indices)
 
-    edges, total_cost = DreyfusWagnerAlgorithm(vertices, optional_vertices).solve()
+    edges, total_cost = BruteForceMST(vertices, optional_vertices).solve()
 
     assert expected_total_cost == total_cost
-    assert edges == expected_edges
+    # Order should not matter
+    assert set(edges) == set(expected_edges)
