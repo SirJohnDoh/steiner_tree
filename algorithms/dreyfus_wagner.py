@@ -62,7 +62,7 @@ class DreyfusWagnerAlgorithm(TreeSpanningAlgorithm):
     def total_cost(self) -> float:
         return self._total_cost
 
-    def _connect_vertex(self, vertex: List[Vertex], remaining_terminals: bitarray) -> float:
+    def _connect_vertex(self, vertex: Vertex, remaining_terminals: bitarray) -> float:
 
         # Copy the remaining terminals
         remaining = bitarray(remaining_terminals)
