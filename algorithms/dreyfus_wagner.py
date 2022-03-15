@@ -60,7 +60,7 @@ class DreyfusWagnerAlgorithm(TreeSpanningAlgorithm):
         return self.steiner_edges, self.total_cost()
 
     def total_cost(self) -> float:
-        return self._total_cost
+        return sum([e.distance() for e in self.steiner_edges])
 
     def _connect_vertex(self, vertex: Vertex, remaining_terminals: bitarray) -> float:
 
