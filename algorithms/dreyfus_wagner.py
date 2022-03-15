@@ -115,7 +115,7 @@ class DreyfusWagnerAlgorithm(TreeSpanningAlgorithm):
             best_split_distance = self._split_vertex(vertex, remaining)
             candidate = vertex
 
-            # Check every grid vertex if they can offer a better split
+            # Check every optional vertex if they can offer a better split
             for optional_vertex in self.optional_vertices:
                 distance = self._split_vertex(optional_vertex, remaining)
                 distance += vertex.distance_to(optional_vertex)
